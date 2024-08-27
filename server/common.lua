@@ -14,18 +14,22 @@ Core.playersByIdentifier = {}
 
 Core.vehicleTypesByModel = {}
 
-RegisterNetEvent("esx:onPlayerSpawn", function()
+RegisterNetEvent('esx:onPlayerSpawn', function()
     ESX.Players[source].spawned = true
 end)
 
-AddEventHandler("esx:getSharedObject", function()
-    local Invoke = GetInvokingResource()
-    print(("[^1ERROR^7] Resource ^5%s^7 Used the ^5getSharedObject^7 Event, this event ^1no longer exists!^7 Visit https://documentation.esx-framework.org/tutorials/tutorials-esx/sharedevent for how to fix!"):format(Invoke))
+AddEventHandler('esx:getSharedObject', function(cb)
+    cb(ESX)
 end)
 
-exports("getSharedObject", function()
+exports('getSharedObject', function()
     return ESX
 end)
+
+if GetResourceState('qs-inventory') ~= 'missing' then
+    Config.QSInventory = true
+    Config.PlayerFunctionOverride = 'QSInventory'
+end
 
 if Config.OxInventory then
     Config.PlayerFunctionOverride = "OxInventory"
@@ -45,19 +49,22 @@ end
 
 MySQL.ready(function()
     Core.DatabaseConnected = true
+    if Config.QSInventory then
+        ESX.Items = exports['qs-inventory']:GetItemList()
+    end
     if not Config.OxInventory then
-        local items = MySQL.query.await("SELECT * FROM items")
+        local items = MySQL.query.await('SELECT * FROM items')
         for _, v in ipairs(items) do
             ESX.Items[v.name] = { label = v.label, weight = v.weight, rare = v.rare, canRemove = v.can_remove }
         end
     else
-        TriggerEvent("__cfx_export_ox_inventory_Items", function(ref)
+        TriggerEvent('__cfx_export_ox_inventory_Items', function(ref)
             if ref then
                 ESX.Items = ref()
             end
         end)
 
-        AddEventHandler("ox_inventory:itemList", function(items)
+        AddEventHandler('ox_inventory:itemList', function(items)
             ESX.Items = items
         end)
 

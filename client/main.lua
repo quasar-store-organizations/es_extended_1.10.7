@@ -242,10 +242,10 @@ AddEventHandler("skinchanger:modelLoaded", function()
     TriggerEvent("esx:restoreLoadout")
 end)
 
-AddEventHandler("esx:restoreLoadout", function()
-    ESX.SetPlayerData("ped", PlayerPedId())
+AddEventHandler('esx:restoreLoadout', function()
+    ESX.SetPlayerData('ped', PlayerPedId())
 
-    if not Config.OxInventory then
+    if not Config.OxInventory and not Config.QSInventory then
         local ammoTypes = {}
         RemoveAllPedWeapons(ESX.PlayerData.ped, true)
 
@@ -294,9 +294,9 @@ AddEventHandler("esx:setAccountMoney", function(account)
     ESX.SetPlayerData("accounts", ESX.PlayerData.accounts)
 end)
 
-if not Config.OxInventory then
-    RegisterNetEvent("esx:addInventoryItem")
-    AddEventHandler("esx:addInventoryItem", function(item, count, showNotification)
+if not Config.OxInventory and not Config.QSInventory then
+    RegisterNetEvent('esx:addInventoryItem')
+    AddEventHandler('esx:addInventoryItem', function(item, count, showNotification)
         for k, v in ipairs(ESX.PlayerData.inventory) do
             if v.name == item then
                 ESX.UI.ShowInventoryItemNotification(true, v.label, count - v.count)
@@ -310,8 +310,8 @@ if not Config.OxInventory then
         end
     end)
 
-    RegisterNetEvent("esx:removeInventoryItem")
-    AddEventHandler("esx:removeInventoryItem", function(item, count, showNotification)
+    RegisterNetEvent('esx:removeInventoryItem')
+    AddEventHandler('esx:removeInventoryItem', function(item, count, showNotification)
         for i = 1, #ESX.PlayerData.inventory do
             if ESX.PlayerData.inventory[i].name == item then
                 ESX.UI.ShowInventoryItemNotification(false, ESX.PlayerData.inventory[i].label, ESX.PlayerData.inventory[i].count - count)
@@ -325,33 +325,33 @@ if not Config.OxInventory then
         end
     end)
 
-    RegisterNetEvent("esx:addWeapon")
-    AddEventHandler("esx:addWeapon", function()
+    RegisterNetEvent('esx:addWeapon')
+    AddEventHandler('esx:addWeapon', function()
         print("[^1ERROR^7] event ^5'esx:addWeapon'^7 Has Been Removed. Please use ^5xPlayer.addWeapon^7 Instead!")
     end)
 
-    RegisterNetEvent("esx:addWeaponComponent")
-    AddEventHandler("esx:addWeaponComponent", function()
+    RegisterNetEvent('esx:addWeaponComponent')
+    AddEventHandler('esx:addWeaponComponent', function()
         print("[^1ERROR^7] event ^5'esx:addWeaponComponent'^7 Has Been Removed. Please use ^5xPlayer.addWeaponComponent^7 Instead!")
     end)
 
-    RegisterNetEvent("esx:setWeaponAmmo")
-    AddEventHandler("esx:setWeaponAmmo", function()
+    RegisterNetEvent('esx:setWeaponAmmo')
+    AddEventHandler('esx:setWeaponAmmo', function()
         print("[^1ERROR^7] event ^5'esx:setWeaponAmmo'^7 Has Been Removed. Please use ^5xPlayer.addWeaponAmmo^7 Instead!")
     end)
 
-    RegisterNetEvent("esx:setWeaponTint")
-    AddEventHandler("esx:setWeaponTint", function(weapon, weaponTintIndex)
+    RegisterNetEvent('esx:setWeaponTint')
+    AddEventHandler('esx:setWeaponTint', function(weapon, weaponTintIndex)
         SetPedWeaponTintIndex(ESX.PlayerData.ped, joaat(weapon), weaponTintIndex)
     end)
 
-    RegisterNetEvent("esx:removeWeapon")
-    AddEventHandler("esx:removeWeapon", function()
+    RegisterNetEvent('esx:removeWeapon')
+    AddEventHandler('esx:removeWeapon', function()
         print("[^1ERROR^7] event ^5'esx:removeWeapon'^7 Has Been Removed. Please use ^5xPlayer.removeWeapon^7 Instead!")
     end)
 
-    RegisterNetEvent("esx:removeWeaponComponent")
-    AddEventHandler("esx:removeWeaponComponent", function(weapon, weaponComponent)
+    RegisterNetEvent('esx:removeWeaponComponent')
+    AddEventHandler('esx:removeWeaponComponent', function(weapon, weaponComponent)
         local componentHash = ESX.GetWeaponComponent(weapon, weaponComponent).hash
         RemoveWeaponComponentFromPed(ESX.PlayerData.ped, joaat(weapon), componentHash)
     end)
@@ -367,9 +367,9 @@ AddEventHandler("esx:setGroup", function(group)
     ESX.SetPlayerData("group", group)
 end)
 
-if not Config.OxInventory then
-    RegisterNetEvent("esx:createPickup")
-    AddEventHandler("esx:createPickup", function(pickupId, label, coords, itemType, name, components, tintIndex)
+if not Config.OxInventory and not Config.QSInventory then
+    RegisterNetEvent('esx:createPickup')
+    AddEventHandler('esx:createPickup', function(pickupId, label, coords, itemType, name, components, tintIndex)
         local function setObjectProperties(object)
             SetEntityAsMissionEntity(object, true, false)
             PlaceObjectOnGroundProperly(object)
@@ -384,7 +384,7 @@ if not Config.OxInventory then
             }
         end
 
-        if itemType == "item_weapon" then
+        if itemType == 'item_weapon' then
             local weaponHash = joaat(name)
             ESX.Streaming.RequestWeaponAsset(weaponHash)
             local pickupObject = CreateWeaponObject(weaponHash, 50, coords.x, coords.y, coords.z, true, 1.0, 0)
@@ -397,14 +397,14 @@ if not Config.OxInventory then
 
             setObjectProperties(pickupObject)
         else
-            ESX.Game.SpawnLocalObject("prop_money_bag_01", coords, setObjectProperties)
+            ESX.Game.SpawnLocalObject('prop_money_bag_01', coords, setObjectProperties)
         end
     end)
 
-    RegisterNetEvent("esx:createMissingPickups")
-    AddEventHandler("esx:createMissingPickups", function(missingPickups)
+    RegisterNetEvent('esx:createMissingPickups')
+    AddEventHandler('esx:createMissingPickups', function(missingPickups)
         for pickupId, pickup in pairs(missingPickups) do
-            TriggerEvent("esx:createPickup", pickupId, pickup.label, vector3(pickup.coords.x, pickup.coords.y, pickup.coords.z - 1.0), pickup.type, pickup.name, pickup.components, pickup.tintIndex)
+            TriggerEvent('esx:createPickup', pickupId, pickup.label, vector3(pickup.coords.x, pickup.coords.y, pickup.coords.z - 1.0), pickup.type, pickup.name, pickup.components, pickup.tintIndex)
         end
     end)
 end
@@ -418,9 +418,9 @@ AddEventHandler("esx:registerSuggestions", function(registeredCommands)
     end
 end)
 
-if not Config.OxInventory then
-    RegisterNetEvent("esx:removePickup")
-    AddEventHandler("esx:removePickup", function(pickupId)
+if not Config.OxInventory and not Config.QSInventory then
+    RegisterNetEvent('esx:removePickup')
+    AddEventHandler('esx:removePickup', function(pickupId)
         if pickups[pickupId] and pickups[pickupId].obj then
             ESX.Game.DeleteObject(pickups[pickupId].obj)
             pickups[pickupId] = nil
@@ -429,7 +429,7 @@ if not Config.OxInventory then
 end
 
 function StartServerSyncLoops()
-    if not Config.OxInventory then
+    if not Config.OxInventory and not Config.QSInventory then
         -- keep track of ammo
 
         CreateThread(function()
@@ -448,7 +448,7 @@ function StartServerSyncLoops()
                         else
                             if ammoCount ~= currentWeapon.Ammo then
                                 currentWeapon.Ammo = ammoCount
-                                TriggerServerEvent("esx:updateWeaponAmmo", weapon.name, ammoCount)
+                                TriggerServerEvent('esx:updateWeaponAmmo', weapon.name, ammoCount)
                             end
                         end
                     end
@@ -473,7 +473,7 @@ if not Config.EnableWantedLevel then
     SetMaxWantedLevel(0)
 end
 
-if not Config.OxInventory then
+if not Config.OxInventory and not Config.QSInventory then
     CreateThread(function()
         while true do
             local Sleep = 1500
@@ -492,18 +492,18 @@ if not Config.OxInventory then
                             if IsPedOnFoot(ESX.PlayerData.ped) and (closestDistance == -1 or closestDistance > 3) and not pickup.inRange then
                                 pickup.inRange = true
 
-                                local dict, anim = "weapons@first_person@aim_rng@generic@projectile@sticky_bomb@", "plant_floor"
+                                local dict, anim = 'weapons@first_person@aim_rng@generic@projectile@sticky_bomb@', 'plant_floor'
                                 ESX.Streaming.RequestAnimDict(dict)
                                 TaskPlayAnim(ESX.PlayerData.ped, dict, anim, 8.0, 1.0, 1000, 16, 0.0, false, false, false)
                                 RemoveAnimDict(dict)
                                 Wait(1000)
 
-                                TriggerServerEvent("esx:onPickup", pickupId)
-                                PlaySoundFrontend(-1, "PICK_UP", "HUD_FRONTEND_DEFAULT_SOUNDSET", false)
+                                TriggerServerEvent('esx:onPickup', pickupId)
+                                PlaySoundFrontend(-1, 'PICK_UP', 'HUD_FRONTEND_DEFAULT_SOUNDSET', false)
                             end
                         end
 
-                        label = ("%s~n~%s"):format(label, TranslateCap("threw_pickup_prompt"))
+                        label = ('%s~n~%s'):format(label, TranslateCap('threw_pickup_prompt'))
                     end
 
                     ESX.Game.Utils.DrawText3D({

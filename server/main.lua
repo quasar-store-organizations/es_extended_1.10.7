@@ -181,8 +181,8 @@ function loadESXPlayer(identifier, playerId, isNew)
     }
 
     -- Inventory
-    if not Config.OxInventory then
-        local inventory = (result.inventory and result.inventory ~= "") and json.decode(result.inventory) or {}
+    if not Config.OxInventory and not Config.QSInventory then
+        local inventory = (result.inventory and result.inventory ~= '') and json.decode(result.inventory) or {}
 
         for name, item in pairs(ESX.Items) do
             local count = inventory[name] or 0
@@ -201,7 +201,7 @@ function loadESXPlayer(identifier, playerId, isNew)
         table.sort(userData.inventory, function(a, b)
             return a.label < b.label
         end)
-    elseif result.inventory and result.inventory ~= "" then
+    elseif result.inventory and result.inventory ~= '' then
         userData.inventory = json.decode(result.inventory)
     end
 
@@ -218,8 +218,8 @@ function loadESXPlayer(identifier, playerId, isNew)
     end
 
     -- Loadout
-    if not Config.OxInventory then
-        if result.loadout and result.loadout ~= "" then
+    if not Config.OxInventory and not Config.QSInventory then
+        if result.loadout and result.loadout ~= '' then
             local loadout = json.decode(result.loadout)
 
             for name, weapon in pairs(loadout) do
@@ -362,9 +362,9 @@ AddEventHandler("esx:playerLogout", function(playerId, cb)
     TriggerClientEvent("esx:onPlayerLogout", playerId)
 end)
 
-if not Config.OxInventory then
-    RegisterNetEvent("esx:updateWeaponAmmo")
-    AddEventHandler("esx:updateWeaponAmmo", function(weaponName, ammoCount)
+if not Config.OxInventory and not Config.QSInventory then
+    RegisterNetEvent('esx:updateWeaponAmmo')
+    AddEventHandler('esx:updateWeaponAmmo', function(weaponName, ammoCount)
         local xPlayer = ESX.GetPlayerFromId(source)
 
         if xPlayer then
